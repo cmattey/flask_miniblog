@@ -1,5 +1,6 @@
 from blog_app import miniblog_db
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(miniblog_db.Model):
     id = miniblog_db.Column(miniblog_db.Integer, primary_key = True)
@@ -10,6 +11,12 @@ class User(miniblog_db.Model):
 
     def __repr__(self):
         return "<User {}>".format(self.username)
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def get_password(self, password):
+        return check_password_hash(self.password, password)
 
 class Post(miniblog_db.Model):
     id = miniblog_db.Column(miniblog_db.Integer, primary_key = True)
