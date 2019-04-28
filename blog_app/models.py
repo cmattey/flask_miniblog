@@ -2,7 +2,7 @@ from blog_app import miniblog_db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from app import login
+from blog_app import login
 
 @login.user_loader
 def load_user(id):
@@ -19,10 +19,10 @@ class User(UserMixin, miniblog_db.Model):
         return "<User {}>".format(self.username)
 
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        return check_password_hash(self.password_hash, password)
 
 class Post(miniblog_db.Model):
     id = miniblog_db.Column(miniblog_db.Integer, primary_key = True)

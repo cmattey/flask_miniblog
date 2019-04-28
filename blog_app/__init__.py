@@ -11,6 +11,7 @@ app.config.from_object(Config) # sets the configuration details to be retrieved
                                # from the Config class in module config.py
 
 login = LoginManager(app)      # manages the user logged-in state
+login.login_view = 'login'     # function name for login view
 
 miniblog_db = SQLAlchemy(app)
 migrate = Migrate(app,miniblog_db)
