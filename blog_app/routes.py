@@ -1,6 +1,6 @@
-from blog_app import app
+from blog_app import app, miniblog_db
 from flask import Flask,render_template,flash,redirect,url_for, request
-from blog_app.forms import LoginForm
+from blog_app.forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 from blog_app.models import User
 from werkzeug.urls import url_parse
@@ -53,3 +53,20 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        miniblog_db.session.add(user)
+        miniblog_db.session.commit()
+        flash('Congratulations! You have successfully registered.')
+        return redirect(url_for('login'))
+
+    return render_template('register.html', title="Register", form=form)
