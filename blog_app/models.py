@@ -3,6 +3,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from blog_app import login
+from hashlib import md5
 
 @login.user_loader
 def load_user(id):
@@ -14,6 +15,8 @@ class User(UserMixin, miniblog_db.Model):
     email = miniblog_db.Column(miniblog_db.String(128), index = True, unique = True)
     password_hash = miniblog_db.Column(miniblog_db.String(128))
     posts = miniblog_db.relationship('Post', backref='author', lazy='dynamic')
+    about_me = miniblog_db.Column(miniblog_db.String(140))
+    last_seen = miniblog_db.Column(miniblog_db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return "<User {}>".format(self.username)
@@ -23,6 +26,10 @@ class User(UserMixin, miniblog_db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode("utf-8")).hexdigest()
+        return "https://www.gravatar.com/avatar/{}?d=retro&s={}".format(digest,size)
 
 class Post(miniblog_db.Model):
     id = miniblog_db.Column(miniblog_db.Integer, primary_key = True)
