@@ -1,27 +1,26 @@
 from blog_app import app, miniblog_db
 from flask import Flask,render_template,flash,redirect,url_for, request
-from blog_app.forms import LoginForm, RegistrationForm, EditProfileForm
+from blog_app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
 from flask_login import current_user, login_user, logout_user, login_required
-from blog_app.models import User
+from blog_app.models import User, Post
 from werkzeug.urls import url_parse
 from datetime import datetime
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET','POST'])
+@app.route('/index', methods=['GET','POST'])
 @login_required
 def index():
-    user = {'username':'Miguel'}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-    return render_template('index.html', title='Home',posts=posts)
+
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        miniblog_db.session.add(post)
+        miniblog_db.session.commit()
+        flash("Your post is now live!")
+        return redirect(url_for('index'))
+
+    posts = current_user.followed_posts.all()
+    return render_template('index.html', title='Home', form=form, posts=posts)
 
 @app.route('/login', methods=['GET','POST'])
 def login():

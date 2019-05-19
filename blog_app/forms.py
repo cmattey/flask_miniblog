@@ -44,3 +44,8 @@ class EditProfileForm(FlaskForm):
             user = User.query.filter_by(username=self.username.data).first()
             if user is not None:
                 raise ValidationError("Username currently in use, use different username")
+
+class PostForm(FlaskForm):
+    post = TextAreaField("What's on your mind?", validators=[Datarequired(),
+            Length(min=1,max=140)])
+    submit = SubmitField("Submit")
