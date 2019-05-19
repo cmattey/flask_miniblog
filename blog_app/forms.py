@@ -46,6 +46,6 @@ class EditProfileForm(FlaskForm):
                 raise ValidationError("Username currently in use, use different username")
 
 class PostForm(FlaskForm):
-    post = TextAreaField("What's on your mind?", validators=[Datarequired(),
+    post = TextAreaField("What's on your mind?", validators=[DataRequired(),
             Length(min=1,max=140)])
     submit = SubmitField("Submit")
