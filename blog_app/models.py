@@ -115,10 +115,12 @@ class User(UserMixin, miniblog_db.Model):
     table, without the extra columns added by the join operation.
     """
     def followed_posts(self):
-        return Post.query.join(
+        followed = Post.query.join(
             followers, (followers.c.followed_id ==  Post.id)).filter(
-            followers.c.follower_id == self.id).order_by(
-            Post.timestamp.desc())
+            followers.c.follower_id == self.id)
+        # To get own posts along with followed posts
+        own = Post.query.filter_by(user_id==self.id)
+        return followed.union(own).order_by(Post.timestamp.desc())
 
 class Post(miniblog_db.Model):
     id = miniblog_db.Column(miniblog_db.Integer, primary_key = True)
