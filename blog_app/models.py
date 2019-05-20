@@ -89,7 +89,7 @@ class User(UserMixin, miniblog_db.Model):
             self.followed.append(user)
 
     def unfollow(self, user):
-        if not self.is_following(user):
+        if self.is_following(user):
             self.followed.remove(user)
 
     def is_following(self, user):
@@ -116,10 +116,10 @@ class User(UserMixin, miniblog_db.Model):
     """
     def followed_posts(self):
         followed = Post.query.join(
-            followers, (followers.c.followed_id ==  Post.id)).filter(
+            followers, (followers.c.followed_id ==  Post.user_id)).filter(
             followers.c.follower_id == self.id)
         # To get own posts along with followed posts
-        own = Post.query.filter_by(user_id==self.id)
+        own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
 
 class Post(miniblog_db.Model):
