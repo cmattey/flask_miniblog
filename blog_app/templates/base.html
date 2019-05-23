@@ -1,32 +1,47 @@
-<html>
-    <head>
+{% extends 'bootstrap/base.html' %}
+
+
+{% block title %}
       {% if title %}
-      <title>{{ title }} - Microblog</title>
+      {{ title }} - Microblog
       {% else %}
-      <title>Welcome to Microblog</title>
+      Welcome to Microblog
       {% endif %}
-    </head>
-    <body>
-        <div>Microblog:
-          <a href="{{ url_for('index') }}">Home</a>
-          {% if current_user.is_anonymous %}
-          <a href="{{ url_for('login') }}">Login</a>
-          {% else %}
-          <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
-          <a href="{{ url_for('explore') }}">Explore</a>
-          <a href="{{ url_for('logout')}}">Logout</a>
-          {% endif %}
+{% endblock %}
+
+{% block navbar %}
+      <nav class="navbar navbar-default">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{ url_for('index') }}">Microblog</a>
         </div>
-        <hr>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('explore') }}">Explore</a></li>
+          </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          {% if current_user.is_anonymous %}
+          <li><a href="{{ url_for('login') }}">Login</a></li>
+          {% else %}
+          <li><a href="{{ url_for('user', username=current_user.username) }}">Profile</a></li>
+          <li><a href="{{ url_for('logout')}}">Logout</a></li>
+          {% endif %}
+        </ul>
+      </div>
+      </nav>
+{% endblock %}
+
+{% block content %}
+      <div class="container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-        <ul>
             {% for message in messages %}
-            <li>{{ message }}</li>
+            <div class="alert alert-info" role="alert">{{ message }}</div>
             {% endfor %}
-        </ul>
         {% endif %}
         {% endwith %}
-        {% block content %}{% endblock %}
-    </body>
-</html>
+      </div>
+        {% block app_content %}{% endblock %}
+
+{% endblock %}
