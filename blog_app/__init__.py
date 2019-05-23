@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
 
 app = Flask(__name__)          # __name__ is a Python predefined variable that is
                                # set to name of the module in which it is used
@@ -18,6 +19,7 @@ miniblog_db = SQLAlchemy(app)
 migrate = Migrate(app,miniblog_db)
 
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 from blog_app import routes, models # models module will define the structure of
                                     # of the database
